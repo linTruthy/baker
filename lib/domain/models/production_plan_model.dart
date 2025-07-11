@@ -1,7 +1,6 @@
 // pubspec.yaml dependencies
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 class ProductionPlanModel {
   final String id;
   final String productId;
@@ -67,3 +66,44 @@ class ProductionPlanModel {
     };
   }
 }
+
+class DailyReportModel {
+  final String id;
+  final DateTime reportDate;
+  final Map<String, dynamic> summaryData; // Flexible map for different report types
+  final String? supervisorSignatureUrl; // Firebase Storage URL
+  final String? supervisorSignedBy; // User ID of the supervisor who signed off
+  final DateTime createdAt;
+
+  DailyReportModel({
+    required this.id,
+    required this.reportDate,
+    required this.summaryData,
+    this.supervisorSignatureUrl,
+    this.supervisorSignedBy,
+    required this.createdAt,
+  });
+
+  factory DailyReportModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return DailyReportModel(
+      id: doc.id,
+      reportDate: (data['reportDate'] as Timestamp).toDate(),
+      summaryData: Map<String, dynamic>.from(data['summaryData'] ?? {}),
+      supervisorSignatureUrl: data['supervisorSignatureUrl'],
+      supervisorSignedBy: data['supervisorSignedBy'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'reportDate': Timestamp.fromDate(reportDate),
+      'summaryData': summaryData,
+      'supervisorSignatureUrl': supervisorSignatureUrl,
+      'supervisorSignedBy': supervisorSignedBy,
+      'createdAt': Timestamp.fromDate(createdAt),
+    };
+  }
+}
+

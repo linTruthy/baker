@@ -1,10 +1,12 @@
-// pubspec.yaml dependencies
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/main.dart';
-import 'package:myapp/presentation/widgets/custom_text_field.dart';
-import 'package:myapp/presentation/widgets/loading_button.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+
+import '../../providers/auth_provider.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/loading_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

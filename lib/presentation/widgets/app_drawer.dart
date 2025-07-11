@@ -1,13 +1,13 @@
-// pubspec.yaml dependencies
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:myapp/core/constants/app_constants.dart';
-import 'package:myapp/presentation/providers/auth_provider.dart';
+
+import '../../core/constants/app_constants.dart';
+import '../providers/auth_provider.dart';
+
 
 class AppDrawer extends ConsumerWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,18 +15,14 @@ class AppDrawer extends ConsumerWidget {
     final user = authState.value;
 
     if (user == null) {
-      return const Drawer(
-        child: Center(child: CircularProgressIndicator()),
-      );
+      return const Drawer(child: Center(child: CircularProgressIndicator()));
     }
 
     return Drawer(
       child: Column(
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-            ),
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -48,10 +44,7 @@ class AppDrawer extends ConsumerWidget {
                 ),
                 Text(
                   _getRoleDisplayName(user.role),
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
             ),
@@ -106,7 +99,8 @@ class AppDrawer extends ConsumerWidget {
 
     final roleSpecificItems = <Widget>[];
 
-    if (role == AppConstants.roleManager || role == AppConstants.roleStorekeeper) {
+    if (role == AppConstants.roleManager ||
+        role == AppConstants.roleStorekeeper) {
       roleSpecificItems.add(
         ListTile(
           leading: const Icon(Icons.inventory),
@@ -119,7 +113,8 @@ class AppDrawer extends ConsumerWidget {
       );
     }
 
-    if (role == AppConstants.roleManager || role == AppConstants.roleProductionSupervisor) {
+    if (role == AppConstants.roleManager ||
+        role == AppConstants.roleProductionSupervisor) {
       roleSpecificItems.add(
         ListTile(
           leading: const Icon(Icons.precision_manufacturing),
@@ -132,7 +127,8 @@ class AppDrawer extends ConsumerWidget {
       );
     }
 
-    if (role == AppConstants.roleManager || role == AppConstants.roleDispatchOfficer) {
+    if (role == AppConstants.roleManager ||
+        role == AppConstants.roleDispatchOfficer) {
       roleSpecificItems.add(
         ListTile(
           leading: const Icon(Icons.local_shipping),

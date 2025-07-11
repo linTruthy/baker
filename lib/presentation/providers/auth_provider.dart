@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/domain/models/user_model.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../domain/models/user_model.dart';
 
 final authProvider =
     StateNotifierProvider<AuthNotifier, AsyncValue<UserModel?>>((ref) {
@@ -22,11 +22,10 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     _auth.authStateChanges().listen((user) async {
       if (user != null) {
         try {
-          final userDoc =
-              await _firestore
-                  .collection(AppConstants.usersCollection)
-                  .doc(user.uid)
-                  .get();
+          final userDoc = await _firestore
+              .collection(AppConstants.usersCollection)
+              .doc(user.uid)
+              .get();
 
           if (userDoc.exists) {
             final userModel = UserModel.fromFirestore(userDoc);

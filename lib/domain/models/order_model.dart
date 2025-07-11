@@ -1,6 +1,7 @@
 // pubspec.yaml dependencies
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 class OrderModel {
   final String id;
@@ -72,6 +73,61 @@ class OrderModel {
       'approvedBy': approvedBy,
       'approvedAt': approvedAt != null ? Timestamp.fromDate(approvedAt!) : null,
       'notes': notes,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+}
+
+@JsonSerializable()
+class DispatchModel {
+  final String id;
+  final String orderId;
+  final String recipientName;
+  final DateTime deliveryDate;
+  final String status; // e.g., 'prepared', 'dispatched', 'delivered'
+  final String? signatureImageUrl;
+  final String createdBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  DispatchModel({
+    required this.id,
+    required this.orderId,
+    required this.recipientName,
+    required this.deliveryDate,
+    required this.status,
+    this.signatureImageUrl,
+    required this.createdBy,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory DispatchModel.fromJson(Map<String, dynamic> json) => _$DispatchModelFromJson(json);
+  Map<String, dynamic> toJson() => _$DispatchModelToJson(this);
+
+  factory DispatchModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return DispatchModel(
+      id: doc.id,
+      orderId: data['orderId'] ?? '',
+      recipientName: data['recipientName'] ?? '',
+      deliveryDate: (data['deliveryDate'] as Timestamp).toDate(),
+      status: data['status'] ?? 'prepared',
+      signatureImageUrl: data['signatureImageUrl'],
+      createdBy: data['createdBy'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate());
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'orderId': orderId,
+      'recipientName': recipientName,
+      'deliveryDate': Timestamp.fromDate(deliveryDate),
+      'status': status,
+      'signatureImageUrl': signatureImageUrl,
+      'createdBy': createdBy,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
