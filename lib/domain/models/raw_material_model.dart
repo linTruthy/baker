@@ -5,33 +5,26 @@ part 'raw_material_model.freezed.dart';
 part 'raw_material_model.g.dart';
 
 class RawMaterialModel {
-  final String id;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? id;
   final String name;
   final String category;
   final String unit;
   final double currentStock;
   final double reorderLevel;
-  final double unitCost;
   final String? supplierId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
   final String? supplierName;
 
   RawMaterialModel({
-    required this.id,
+    this.id,
     required this.name,
     required this.category,
     required this.unit,
-    this.currentStock = 0.0,
-    this.reorderLevel = 0.0,
-    required this.unitCost,
+    this.currentStock = 0.0, // Default value
+    this.reorderLevel = 0.0, // Default value
     this.supplierId,
-    required this.createdAt, // Consider making this nullable or auto-generated
-    required this.updatedAt, // Consider making this nullable or auto-generated
     this.supplierName,
   });
-
-  // Method to convert the model to a Firestore document
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
@@ -40,44 +33,27 @@ class RawMaterialModel {
       'currentStock': currentStock,
       'reorderLevel': reorderLevel,
       'unitCost': unitCost,
-      'supplierId': supplierId,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'updatedAt': Timestamp.fromDate(updatedAt),
+      'supplierId': supplierId, // Include supplierId
     };
   }
 
   bool get isLowStock => currentStock <= reorderLevel;
 
-  Map<Object, Object?> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category,
-      'unit': unit,
-      'currentStock': currentStock,
-      'reorderLevel': reorderLevel,
-      'unitCost': unitCost,
-      'supplierId': supplierId,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
-      'supplierName': supplierName,
-    };
+  factory RawMaterialModel.fromJson(Map<String, dynamic> json) {
+    return RawMaterialModel(
+      id: json['id'],
+      name: json['name'],
+      category: json['category'],
+      unit: json['unit'],
+      currentStock: json['currentStock'].toDouble(),
+      reorderLevel: json['reorderLevel'].toDouble(),
+      supplierId: json['supplierId'],
+      supplierName: json['supplierName'],
+    );
   }
 
-  static fromMap(Map<String, dynamic> data, String id) {
-    return RawMaterialModel(
-      id: id,
-      name: data['name'],
-      category: data['category'],
-      unit: data['unit'],
-      currentStock: data['currentStock'],
-      reorderLevel: data['reorderLevel'],
-      unitCost: data['unitCost'],
-      supplierId: data['supplierId'],
-      createdAt: data['createdAt'],
-      updatedAt: data['updatedAt'],
-      supplierName: data['supplierName'],
-    );
+  Map<String, dynamic> toJson() {
+    return _$RawMaterialModelToJson(this);
   }
 }
 
@@ -88,8 +64,8 @@ class BillOfMaterialsModel with _$BillOfMaterialsModel {
     required String productId,
     required String productName,
     required List<BoMItem> items,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    @Default(0) int version, // Added version for potential updates
+    required DateTime createdAt, // Consider making this nullable or auto-generated
   }) = _BillOfMaterialsModel;
 
   factory BillOfMaterialsModel.fromJson(Map<String, dynamic> json) =>
@@ -104,7 +80,8 @@ class BillOfMaterialsModel with _$BillOfMaterialsModel {
       items: (data['items'] as List<dynamic>)
           .map((item) => BoMItem.fromJson(item as Map<String, dynamic>))
           .toList(),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      // Handle potential null or different type for createdAt
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
   }
@@ -116,7 +93,7 @@ class BoMItem with _$BoMItem {
     required String rawMaterialId,
     required String rawMaterialName,
     required double quantity,
-    required String unit,
+    required String unit, // e.g., 'kg', 'grams', 'liters'
   }) = _BoMItem;
 
   factory BoMItem.fromJson(Map<String, dynamic> json) =>

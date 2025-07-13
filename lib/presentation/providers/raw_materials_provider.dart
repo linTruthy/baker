@@ -32,7 +32,7 @@ class RawMaterialNotifier extends StateNotifier<AsyncValue<List<RawMaterialModel
       state.whenData((rawMaterials) {
         state = AsyncValue.data([...rawMaterials, newRawMaterial]);
       });
-    } catch (e, st) {
+    } catch (e) {
       // Handle error appropriately, maybe show a snackbar
       if (kDebugMode) {
         print('Error adding raw material: $e');
@@ -49,7 +49,7 @@ class RawMaterialNotifier extends StateNotifier<AsyncValue<List<RawMaterialModel
             if (rm.id == rawMaterial.id) rawMaterial else rm,
         ]);
       });
-    } catch (e, st) {
+    } catch (e) {
       // Handle error appropriately
       if (kDebugMode) {
         print('Error updating raw material: $e');
@@ -66,7 +66,7 @@ class RawMaterialNotifier extends StateNotifier<AsyncValue<List<RawMaterialModel
             if (rm.id != id) rm,
         ]);
       });
-    } catch (e, st) {
+    } catch (e) {
       // Handle error appropriately
       if (kDebugMode) {
         print('Error deleting raw material: $e');
